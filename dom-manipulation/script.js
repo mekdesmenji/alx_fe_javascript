@@ -122,7 +122,7 @@ function filterQuotes() {
   });
 }
 
-function fetchServerQuotes() {
+function fetchQuotesFromServer() {
   fetch(serverUrl)
     .then((res) => res.json())
     .then((data) => {
@@ -170,5 +170,5 @@ loadQuotes();
 showRandomQuote();
 populateCategories();
 filterQuotes();
-fetchServerQuotes();
-setInterval(fetchServerQuotes, 30000);
+fetchQuotesFromServer();
+setInterval(fetchQuotesFromServer, 30000);
