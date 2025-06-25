@@ -48,6 +48,7 @@ function createAddQuoteForm() {
     saveQuotes();
     populateCategories();
     filterQuotes();
+    syncQuotes();
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
     showRandomQuote();
@@ -135,6 +136,26 @@ async function fetchQuotesFromServer() {
     resolveConflicts(serverQuotes);
   } catch (err) {
     console.error("Server fetch failed", err);
+  }
+}
+
+async function syncQuotes() {
+  try {
+    const response = await fetch(serverUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(quotes),
+    });
+
+    if (response.ok) {
+      console.log("Quotes synced to server successfully.");
+    } else {
+      console.error("Failed to sync quotes:", response.status);
+    }
+  } catch (error) {
+    console.error("Error syncing to server:", error);
   }
 }
 
