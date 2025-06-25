@@ -150,7 +150,7 @@ async function syncQuotes() {
     });
 
     if (response.ok) {
-      console.log("Quotes synced to server successfully.");
+      console.log("Quotes synced with server!");
     } else {
       console.error("Failed to sync quotes:", response.status);
     }
