@@ -122,18 +122,20 @@ function filterQuotes() {
   });
 }
 
-function fetchQuotesFromServer() {
-  fetch(serverUrl)
-    .then((res) => res.json())
-    .then((data) => {
-      const serverQuotes = data.slice(0, 5).map((post) => ({
-        text: post.title,
-        category: "Server",
-      }));
+async function fetchQuotesFromServer() {
+  try {
+    const res = await fetch(serverUrl);
+    const data = await res.json();
 
-      resolveConflicts(serverQuotes);
-    })
-    .catch((err) => console.error("Server fetch failed", err));
+    const serverQuotes = data.slice(0, 5).map((post) => ({
+      text: post.title,
+      category: "Server",
+    }));
+
+    resolveConflicts(serverQuotes);
+  } catch (err) {
+    console.error("Server fetch failed", err);
+  }
 }
 
 function resolveConflicts(serverQuotes) {
