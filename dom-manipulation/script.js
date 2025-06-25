@@ -1,14 +1,18 @@
 let quotes = [
   { text: "The only limit is your mind.", category: "Motivation" },
   { text: "Be yourself; everyone else is already taken.", category: "Life" },
-  { text: "Dream big and dare to fail.", category: "Success" },
+  {
+    text: "Code is like humor. When you have to explain it, it’s bad.",
+    category: "Programming",
+  },
 ];
 
-function showRandomQuote() {
+function displayRandomQuote() {
   const quoteDisplay = document.getElementById("quoteDisplay");
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomIndex];
-  quoteDisplay.textContent = `"${quote.text}" — ${quote.category}`;
+
+  quoteDisplay.innerHTML = `<p>"${quote.text}"</p><p><em>${quote.category}</em></p>`;
 }
 
 function addQuote() {
@@ -19,12 +23,12 @@ function addQuote() {
 
   if (quoteText && quoteCategory) {
     quotes.push({ text: quoteText, category: quoteCategory });
-    alert("Quote added!");
+
+    const quoteDisplay = document.getElementById("quoteDisplay");
+    quoteDisplay.innerHTML = `<p>"${quoteText}"</p><p><em>${quoteCategory}</em></p>`;
 
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
-  } else {
-    alert("Please enter both quote text and category.");
   }
 }
 
@@ -52,6 +56,11 @@ function createAddQuoteForm() {
   document.body.appendChild(formContainer);
 }
 
-document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+document.addEventListener("DOMContentLoaded", function () {
+  const button = document.getElementById("newQuote");
+  if (button) {
+    button.addEventListener("click", displayRandomQuote);
+  }
 
-createAddQuoteForm();
+  createAddQuoteForm();
+});
