@@ -7,14 +7,25 @@ let quotes = [
   { text: "Dream big and dare to fail.", category: "Success" },
 ];
 
-const quoteDisplay = document.getElementById("quoteDisplay");
-const newQuoteBtn = document.getElementById("newQuote");
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem("quotes");
+  if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+  }
+}
+
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
 
 function showRandomQuote() {
+  const quoteDisplay = document.getElementById("quoteDisplay");
   quoteDisplay.innerHTML = "";
 
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomIndex];
+
+  sessionStorage.setItem("lastQuote", JSON.stringify(quote));
 
   const quoteText = document.createElement("p");
   quoteText.textContent = `"${quote.text}"`;
@@ -35,25 +46,51 @@ function createAddQuoteForm() {
   if (quoteText && quoteCategory) {
     const newQuote = { text: quoteText, category: quoteCategory };
     quotes.push(newQuote);
-
-    quoteDisplay.innerHTML = "";
-
-    const quoteTextElem = document.createElement("p");
-    quoteTextElem.textContent = `"${newQuote.text}"`;
-
-    const quoteCategoryElem = document.createElement("em");
-    quoteCategoryElem.textContent = `— ${newQuote.category}`;
-
-    quoteDisplay.appendChild(quoteTextElem);
-    quoteDisplay.appendChild(quoteCategoryElem);
+    saveQuotes();
 
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
+
+    showRandomQuote();
   } else {
     alert("Please enter both quote and category.");
   }
 }
 
-newQuoteBtn.addEventListener("click", showRandomQuote);
+function exportToJsonFile() {
+  const blob = new Blob([JSON.stringify(quotes, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
 
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "quotes.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+      if (Array.isArray(importedQuotes)) {
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        alert("Quotes imported successfully!");
+      } else {
+        alert("Invalid JSON format.");
+      }
+    } catch {
+      alert("Error parsing the file.");
+    }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+
+loadQuotes();
 showRandomQuote();
